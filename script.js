@@ -36,32 +36,21 @@ class CalculadoraEstacionamento {
     }
     
     calcularTempoETroco(valor) {
-        let tempo, troco;
-        
-        if (valor <= 1.00) {
-            tempo = 30;
-            troco = valor - 1.00;
-        } else if (valor <= 1.75) {
-            tempo = 60;
-            troco = valor - 1.75;
-        } else if (valor <= 2.75) {
-            tempo = 90;
-            troco = valor - 2.75;
-        } else if (valor <= 3.75) {
-            tempo = 120;
-            troco = valor - 3.75;
-        } else if (valor <= 4.75) {
-            tempo = 150;
-            troco = valor - 4.75;
-        } else {
-            tempo = 180;
-            troco = valor - 4.75;
+        // A lógica foi corrigida para verificar qual faixa de tempo o valor inserido
+        // pode comprar, checando do preço mais alto para o mais baixo.
+        if (valor > 4.75) {
+            return { tempo: 180, troco: valor - 4.75 };
+        } else if (valor >= 4.75) {
+            return { tempo: 150, troco: valor - 4.75 };
+        } else if (valor >= 3.75) {
+            return { tempo: 120, troco: valor - 3.75 };
+        } else if (valor >= 2.75) {
+            return { tempo: 90, troco: valor - 2.75 };
+        } else if (valor >= 1.75) {
+            return { tempo: 60, troco: valor - 1.75 };
+        } else if (valor >= 1.00) {
+            return { tempo: 30, troco: valor - 1.00 };
         }
-        
-        // Garantir que o troco não seja negativo
-        troco = Math.max(0, troco);
-        
-        return { tempo, troco };
     }
     
     exibirResultado(tempo, troco) {
