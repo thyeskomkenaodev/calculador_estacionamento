@@ -1,74 +1,43 @@
-class CalculadoraEstacionamento {
-    constructor() {
-        this.valorInput = document.getElementById('valor');
-        this.calcularBtn = document.getElementById('calcular');
-        this.resultadoDiv = document.getElementById('resultado');
-        this.tempoElem = document.getElementById('tempo');
-        this.trocoElem = document.getElementById('troco');
-        this.erroElem = document.getElementById('mensagem-erro');
-        
-        this.configurarEventos();
-    }
-    
-    configurarEventos() {
-        this.calcularBtn.addEventListener('click', () => this.calcular());
-        this.valorInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.calcular();
-            }
-        });
-    }
-    
-    calcular() {
-        const valor = parseFloat(this.valorInput.value);
-        
-        // Validar o valor inserido
-        if (isNaN(valor) || valor < 1) {
-            this.exibirErro();
-            return;
-        }
-        
-        // Calcular tempo e troco
-        const { tempo, troco } = this.calcularTempoETroco(valor);
-        
-        // Exibir resultado
-        this.exibirResultado(tempo, troco);
-    }
-    
-    calcularTempoETroco(valor) {
-        // A lógica foi corrigida para verificar qual faixa de tempo o valor inserido
-        // pode comprar, checando do preço mais alto para o mais baixo.
-        if (valor > 4.75) {
-            return { tempo: 180, troco: valor - 4.75 };
-        } else if (valor >= 4.75) {
-            return { tempo: 150, troco: valor - 4.75 };
-        } else if (valor >= 3.75) {
-            return { tempo: 120, troco: valor - 3.75 };
-        } else if (valor >= 2.75) {
-            return { tempo: 90, troco: valor - 2.75 };
-        } else if (valor >= 1.75) {
-            return { tempo: 60, troco: valor - 1.75 };
-        } else if (valor >= 1.00) {
-            return { tempo: 30, troco: valor - 1.00 };
-        }
-    }
-    
-    exibirResultado(tempo, troco) {
-        this.erroElem.style.display = 'none';
-        
-        this.tempoElem.textContent = `Tempo: ${tempo} minutos`;
-        this.trocoElem.textContent = `Troco: R$ ${troco.toFixed(2)}`;
-        
-        this.resultadoDiv.style.display = 'block';
-    }
-    
-    exibirErro() {
-        this.resultadoDiv.style.display = 'none';
-        this.erroElem.style.display = 'block';
-    }
-}
-
-// Inicializar a aplicação quando o documento estiver carregado
+// Aguarda o carregamento completo do conteúdo da página antes de executar o script.
 document.addEventListener('DOMContentLoaded', () => {
-    new CalculadoraEstacionamento();
+
+    // Seleciona os elementos do HTML com os quais vamos interagir.
+    const valorInput = document.getElementById('valor');
+    const calcularBtn = document.getElementById('calcular');
+    const resultadoP = document.getElementById('resultado');
+
+    // Adiciona um "ouvinte" de evento para o clique no botão.
+    calcularBtn.addEventListener('click', () => {
+        // Pega o valor digitado no campo, converte para um número de ponto flutuante (decimal).
+        const valorInserido = parseFloat(valorInput.value);
+        let tempoPermanencia = 0;
+        let troco = 0;
+        let mensagem = '';
+
+        // Verifica se o valor inserido é um número válido.
+        if (isNaN(valorInserido) || valorInserido <= 0) {
+            mensagem = 'Por favor, insira um valor válido.';
+        } else if (valorInserido >= 3.00) {
+            tempoPermanencia = 120;
+            troco = valorInserido - 3.00;
+            mensagem = `Tempo de permanência: ${tempoPermanencia} minutos (Máximo).`;
+        } else if (valorInserido >= 1.75) {
+            tempoPermanencia = 60;
+            troco = valorInserido - 1.75;
+            mensagem = `Tempo de permanência: ${tempoPermanencia} minutos.`;
+        } else if (valorInserido >= 1.00) {
+            tempoPermanencia = 30;
+            troco = valorInserido - 1.00;
+            mensagem = `Tempo de permanência: ${tempoPermanencia} minutos.`;
+        } else {
+            mensagem = 'Valor insuficiente. O mínimo é R$ 1,00.';
+        }
+
+        
+        if (troco > 0) {
+            mensagem += ` Troco: R$ ${troco.toFixed(2).replace('.', ',')}.`;
+        }
+
+        resultadoP.textContent = mensagem;
+    });
 });
